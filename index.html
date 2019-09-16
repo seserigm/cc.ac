@@ -7,7 +7,7 @@
   <meta name="description" content="アカクロ向けのシナリオ整形ツールです。「」内の行頭インデント追加、英数字・空白・記号の全角化、行末の空白削除を一括で行います。">
   <title>アカクロ向けシナリオ整形ツール</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP">
-  <link rel="stylesheet" href="./preformatted.css">
+  <link rel="stylesheet" href="./build/css/main.min.css">
 </head>
 
 <body>
@@ -72,9 +72,6 @@
         let l = arr.length;
         for (let i = 0; i < l; i++) {
           let line = arr[i];
-          let open = line.match(/^「/);
-          let close = line.match(/」(|\s*)$/);
-          let space = line.match(/^　/);
           //line = han2zen(line);
           line = line
             .replace(/⋯/g, '…')
@@ -85,10 +82,17 @@
             .replace(/\~/g, '～')
             .replace(/ /g, '　')
             .replace(/\s/g, '　')
+            .replace(/^　*「/, '「')
+            //.replace(/^　*/, '　')
+            .replace(/「　*/, '「')
+            .replace(/　*」/, '」')
             .replace(/　*$/, '')
             .replace(/[A-Za-z0-9]/g, (s) => {
               return String.fromCharCode(s.charCodeAt(0) + 65248);
             });
+          let open = line.match(/^「/);
+          let close = line.match(/」(|\s*)$/);
+          let space = line.match(/^　/);
           if (!talk && open && !close) {
             talk = true;
             arr[i] = line;
