@@ -1,4 +1,9 @@
-# アカクロ用シナリオ整形ツール
+---
+theme: jekyll-theme-cayman
+lang: ja-JP
+title: アカクロ用シナリオ整形ツール
+---
+
 
 ## 概説
 
