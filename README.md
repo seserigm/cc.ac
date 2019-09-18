@@ -1,6 +1,6 @@
 ---
-theme: jekyll-theme-cayman
 lang: ja-JP
+permalink: /readme
 title: アカクロ用シナリオ整形ツール
 ---
 
