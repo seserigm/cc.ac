@@ -7,7 +7,7 @@ title: アカクロ用シナリオ整形ツール
 
 ## 概説
 
-Archive Chronicle掲載用の書式に整えるツール。
+Archive Chronicleの書式に整形するツールです。
 
 ## 処理内容
 
