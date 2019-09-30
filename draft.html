@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <meta name="description" content="アカクロ向けのシナリオ整形ツールです。「」内の行頭インデント追加、英数字・空白・記号の全角化、行末の空白削除を一括で行います。">
+  <meta name="description" content="アカクロ向けのシナリオ整形ツールです。「」と（）内の行頭インデント追加、英数字・空白・記号の全角化、行末の空白削除を一括で行います。">
   <title>アカクロ向けシナリオ整形ツール</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP">
   <link rel="stylesheet" href="./build/css/main.min.css">
@@ -13,7 +13,7 @@
 <body>
 
   <div class="container">
-    <textarea id="inputarea" class="inout" placeholder="ここに貼り付けて[変換]を押すと、半角の英数字と空白と記号(!,?,=,-,~)を全角に変換します。また、「」内の2行目以降の文頭に全角空白を挿入します（すでにある場合は追加しません）。ついでに行末の余分な空白を削除します。 / ※「」内かどうかは、行頭の'「'と行末の'」'から判別しています。"></textarea>
+    <textarea id="inputarea" class="inout" placeholder="ここに貼り付けて[変換]を押すと、半角の英数字と空白と記号(!?=-~,.():;@)を全角にします。行末のselectは半角にします。また、「」内の2行目以降の行頭を全角空白1つに、「（）」内の2行目以降の行頭を全角空白2つに揃えます。ついでに行末の余分な空白を削除します。"></textarea>
     <div class="functions">
       <div>
         <button id="replace">変換</button>
@@ -40,6 +40,7 @@
     "(": "（",
     ")": "）",
     ":": "：",
+    ";": "；",
     "@": "＠",
     " ": "　",
     "｢": "「",
@@ -104,6 +105,7 @@
       .replace(/「　*/, "「")
       .replace(/　*」/, "」")
       .replace(/　*$/, "")
+      .replace(/ｓｅｌｅｃｔ$/, "select")
     ;
   }
 
