@@ -26,28 +26,12 @@
 
   <script>
 (() => {
-
   'use strict';
-
   const remap = {
-    "!": "！",
-    "?": "？",
-    "=": "＝",
-    "-": "－",
-    "~": "～",
-    ",": "，",
-    ".": "．",
-    "(": "（",
-    ")": "）",
-    ":": "：",
-    ";": "；",
-    "@": "＠",
-    " ": "　",
-    "｢": "「",
-    "｣": "」",
-    "､": "、",
-    "｡": "。",
-    "･": "・",
+    "!": "！", "?": "？", "=": "＝", "-": "－", "~": "～",
+    ",": "，", ".": "．", "(": "（", ")": "）", ":": "：",
+    ";": "；", "@": "＠", " ": "　", "｢": "「", "｣": "」",
+    "､": "、", "｡": "。", "･": "・",
     "ｶﾞ": "ガ", "ｷﾞ": "ギ", "ｸﾞ": "グ", "ｹﾞ": "ゲ", "ｺﾞ": "ゴ",
     "ｻﾞ": "ザ", "ｼﾞ": "ジ", "ｽﾞ": "ズ", "ｾﾞ": "ゼ", "ｿﾞ": "ゾ",
     "ﾀﾞ": "ダ", "ﾁﾞ": "ヂ", "ﾂﾞ": "ヅ", "ﾃﾞ": "デ", "ﾄﾞ": "ド",
@@ -65,11 +49,8 @@
     "ﾗ": "ラ", "ﾘ": "リ", "ﾙ": "ル", "ﾚ": "レ", "ﾛ": "ロ",
     "ﾜ": "ワ", "ｦ": "ヲ", "ﾝ": "ン",
     "ｧ": "ァ", "ｨ": "ィ", "ｩ": "ゥ", "ｪ": "ェ", "ｫ": "ォ",
-    "ｯ": "ッ", "ｬ": "ャ", "ｭ": "ュ", "ｮ": "ョ",
-    "ｰ": "ー"
-    //"": "",
+    "ｯ": "ッ", "ｬ": "ャ", "ｭ": "ュ", "ｮ": "ョ"
   };
-
   const btns = [{
     id: "replace",
     callback: setTargetPreformatted
@@ -77,11 +58,9 @@
     id: "clear",
     callback: setTargetDefault
   }];
-
   function setTargetDefault(target) {
     target.value = "";
   }
-
   function getReplacedToZen(text) {
     const zenMap = Object.keys(remap).join("|\\");
     const reg = new RegExp("(\\" + zenMap + ")", "g");
@@ -95,7 +74,6 @@
       })
     ;
   }
-
   function getReplacedLine(line) {
     return line
       .replace(/⋯/g, "…")
@@ -108,7 +86,6 @@
       .replace(/ｓｅｌｅｃｔ$/, "select")
     ;
   }
-
   function getLineState(line, speak, monologue) {
     return {
       space: line.match(/^　/) || false,
@@ -120,7 +97,6 @@
       monologueEnd: line.match("）") || false
     };
   }
-
   function getIndentedLine(state, line) {
     const stateCode = Object.values(state).join("")
       .replace(/false/g, "0")
@@ -132,8 +108,6 @@
     console.log(stateCode, line);
     return prespace + line;
   }
-
-
   function getIndentedLines(lines) {
     let speak = false;
     let monologue = false;
@@ -148,7 +122,6 @@
     }
     return lines;
   }
-
   function setTargetPreformatted(target) {
     const text = getReplacedToZen(target.value);
     const lines = text.split("\n");
@@ -156,7 +129,6 @@
     target.value = result.join("\n");
     console.log(result.join("\n"));
   }
-
   window.addEventListener('load', () => {
     const target = document.getElementById("inputarea");
     btns.forEach((obj) => {
@@ -170,8 +142,7 @@
       });
     });
   });
-
 })();
-</script>
+  </script>
 </body>
 </html>
