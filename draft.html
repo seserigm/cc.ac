@@ -26,7 +26,17 @@
 
   <script>
 (() => {
-  'use strict';
+
+  "use strict";
+
+  const btns = [{
+    id: "replace",
+    callback: setFormattedText
+  }, {
+    id: "clear",
+    callback: setDefault
+  }];
+
   const remap = {
     "!": "！", "?": "？", "=": "＝", "-": "－", "~": "～",
     ",": "，", ".": "．", "(": "（", ")": "）", ":": "：",
@@ -51,97 +61,97 @@
     "ｧ": "ァ", "ｨ": "ィ", "ｩ": "ゥ", "ｪ": "ェ", "ｫ": "ォ",
     "ｯ": "ッ", "ｬ": "ャ", "ｭ": "ュ", "ｮ": "ョ"
   };
-  const btns = [{
-    id: "replace",
-    callback: setTargetPreformatted
-  }, {
-    id: "clear",
-    callback: setTargetDefault
-  }];
-  function setTargetDefault(target) {
-    target.value = "";
-  }
-  function getReplacedToZen(text) {
-    const zenMap = Object.keys(remap).join("|\\");
-    const reg = new RegExp("(\\" + zenMap + ")", "g");
-    return text.replace(reg, (match) => {
+
+  function getZenText(v) {
+    const hans = Object.keys(remap).join("|\\");
+    const reg = new RegExp("(\\" + hans + ")", "g");
+    return v.replace(reg, (match) => {
       return remap[match];
     })
-      .replace(/ﾞ/g, '゛')
-      .replace(/ﾟ/g, '゜')
+      .replace(/ﾞ/g, "゛")
+      .replace(/ﾟ/g, "゜")
       .replace(/[A-Za-z0-9]/g, (str) => {
         return String.fromCharCode(str.charCodeAt(0) + 65248);
       })
     ;
   }
-  function getReplacedLine(line) {
-    return line
-      .replace(/⋯/g, "…")
-      .replace(/\s/g, "　")
-      .replace(/^　*/, "")
-      //.replace(/^　*「/, "「")
-      .replace(/「　*/, "「")
-      .replace(/　*」/, "」")
-      .replace(/　*$/, "")
-      .replace(/ｓｅｌｅｃｔ$/, "select")
+
+  function adjustForOCR(text) {
+    return text
+      .replace(/\r/g, "\n")
+      .replace(/．．．/g, "…")
+      .replace(/・・・/g, "…")
+      .replace(/([^\n])?　「/g, "$1\n「")
+      .replace(/」([^\n])/g, "」\n$1")
+      .replace(/ｓｅｌｅｃｔ/g, "→select")
+      .replace(/→→select/g, "→select")
+      .replace(/\n[ａ-ｚＡ-Ｚ０-９].*/g, "")
     ;
   }
-  function getLineState(line, speak, monologue) {
-    return {
-      space: line.match(/^　/) || false,
-      speak: speak || false,
-      speakStart: line.match(/^「/) || false,
-      speakEnd: line.match(/」(|\s*)$/) || false,
-      monologue: monologue || false,
-      monologueStart: line.match("（") || false,
-      monologueEnd: line.match("）") || false
-    };
-  }
-  function getIndentedLine(state, line) {
-    const stateCode = Object.values(state).join("")
-      .replace(/false/g, "0")
-      .replace(/true|「|」,|（|）|　/g, "1")
-    ;
-    let prespace = "";
-    if (state.speak) prespace += "　";
-    if (state.monologue) prespace += "　";
-    console.log(stateCode, line);
-    return prespace + line;
-  }
-  function getIndentedLines(lines) {
+
+  function setIndent(lines) {
     let speak = false;
     let monologue = false;
     for (let i = 0, l = lines.length; i < l; i++) {
-      let line = getReplacedLine(lines[i]);
-      let state = getLineState(line, speak, monologue);
+      let line = lines[i]
+        .replace(/⋯/g, "…")
+        .replace(/^　*/, "")
+        .replace(/「　*/, "「")
+        .replace(/　*」/, "」")
+        .replace(/　*$/, "")
+      ;
+      let state = {
+        space: line.match(/^　/) || false,
+        speak: speak || false,
+        speakStart: line.match(/^「/) || false,
+        speakEnd: line.match(/」(|\s*)$/) || false,
+        monologue: monologue || false,
+        monologueStart: line.match("（") || false,
+        monologueEnd: line.match("）") || false
+      };
+      let prespace = "";
       if (state.speakStart && !state.speakEnd) speak = true;
       else if (state.speak && state.speakEnd) speak = false;
       if (state.monologueStart && !state.monologueEnd) monologue = true;
       else if (state.monologue && state.monologueEnd) monologue = false;
-      lines[i] = getIndentedLine(state, line);
+      if (state.speak) prespace += "　";
+      if (state.monologue) prespace += "　";
+      const stateCode = Object.values(state).join("")
+        .replace(/false/g, "0")
+        .replace(/true|「|」,|（|）|　/g, "1")
+      ;
+      console.log(stateCode, line);
+      lines[i] = prespace + line;
     }
     return lines;
   }
-  function setTargetPreformatted(target) {
-    const text = getReplacedToZen(target.value);
-    const lines = text.split("\n");
-    const result = getIndentedLines(lines);
-    target.value = result.join("\n");
-    console.log(result.join("\n"));
+
+  function setFormattedText(target) {
+    target.value = setIndent(
+      adjustForOCR(
+        getZenText(target.value)
+      ).split("\n")
+    ).join("\n");
   }
-  window.addEventListener('load', () => {
+
+  function setDefault(target) {
+    target.value = "";
+  }
+
+  window.addEventListener("load", () => {
     const target = document.getElementById("inputarea");
     btns.forEach((obj) => {
       const btn = document.getElementById(obj.id);
       btn.addEventListener("click", () => {
-        obj.callback(target)
+        obj.callback(target);
       });
       btn.addEventListener("touchend", (e) => {
-        e.preventDefault();
+        e.prevendDefault();
         obj.callback(target);
       });
     });
   });
+
 })();
   </script>
 </body>
